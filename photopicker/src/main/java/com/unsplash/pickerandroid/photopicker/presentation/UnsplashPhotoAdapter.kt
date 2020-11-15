@@ -2,16 +2,20 @@ package com.unsplash.pickerandroid.photopicker.presentation
 
 import android.content.Context
 import android.graphics.Color
+import android.text.Html
+import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.text.HtmlCompat
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import com.unsplash.pickerandroid.photopicker.R
+import com.unsplash.pickerandroid.photopicker.UnsplashPhotoPicker
 import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
 import kotlinx.android.synthetic.main.item_unsplash_photo.view.*
 
@@ -44,7 +48,9 @@ class UnsplashPhotoAdapter constructor(context: Context, private val isMultipleS
             Picasso.get().load(photo.urls.small)
                 .into(holder.imageView)
             // photograph name
-            holder.txtView.text = photo.user.name
+            val txt = String.format("<a href=\"%s?utm_source=%s&utm_medium=referral\">%s</a>", photo.user.links.html, UnsplashPhotoPicker.getAppName(), photo.user.name)
+            holder.txtView.text = HtmlCompat.fromHtml(txt, HtmlCompat.FROM_HTML_MODE_LEGACY)
+            holder.txtView.movementMethod = LinkMovementMethod.getInstance()
             // selected controls visibility
             holder.checkedImageView.visibility =
                     if (mSelectedIndexes.contains(holder.adapterPosition)) View.VISIBLE else View.INVISIBLE

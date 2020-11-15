@@ -9,6 +9,8 @@ object UnsplashPhotoPicker {
 
     private lateinit var application: Application
 
+    private lateinit var appName: String
+
     private lateinit var accessKey: String
 
     private lateinit var secretKey: String
@@ -21,11 +23,13 @@ object UnsplashPhotoPicker {
 
     fun init(
         application: Application,
+        appName: String,
         accessKey: String,
         secretKey: String,
         pageSize: Int = DEFAULT_PAGE_SIZE
     ): UnsplashPhotoPicker {
         this.application = application
+        this.appName = appName
         this.accessKey = accessKey
         this.secretKey = secretKey
         this.pageSize = pageSize
@@ -34,6 +38,10 @@ object UnsplashPhotoPicker {
 
     fun getApplication(): Application {
         return application
+    }
+
+    fun getAppName(): String {
+        return appName
     }
 
     fun getAccessKey(): String {
