@@ -10,6 +10,7 @@ class ExampleApplication : Application() {
         // initializing the picker library
         UnsplashPhotoPicker.init(
             this,
+            "your app name",
             "your access key",
             "your secret key"
             /* optional page size (number of photos per page) */
