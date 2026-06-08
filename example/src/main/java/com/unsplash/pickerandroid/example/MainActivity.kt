@@ -5,32 +5,44 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.unsplash.pickerandroid.example.databinding.ActivityMainBinding
 import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
 import com.unsplash.pickerandroid.photopicker.presentation.UnsplashPickerActivity
-import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var mAdapter: PhotoAdapter
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        // result adapter
-        // recycler view configuration
-        main_recycler_view.setHasFixedSize(true)
-        main_recycler_view.itemAnimator = null
-        main_recycler_view.layoutManager = StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        // Apply Window Insets so views stay away from the Status/Navigation bars
+        ViewCompat.setOnApplyWindowInsetsListener(binding.mainRootLayout) { view, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            // Apply status bar height to padding top, and navigation bar to padding bottom
+            view.setPadding(insets.left, insets.top, insets.right, insets.bottom)
+            windowInsets
+        }
+
+        // Recycler view configuration
+        binding.mainRecyclerView.setHasFixedSize(true)
+        binding.mainRecyclerView.itemAnimator = null
+        binding.mainRecyclerView.layoutManager = StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
         mAdapter = PhotoAdapter(this)
-        main_recycler_view.adapter = mAdapter
-        // on the pick button click, we start the library picker activity
-        // we are expecting a result from it so we start it for result
-        main_pick_button.setOnClickListener {
+        binding.mainRecyclerView.adapter = mAdapter
+
+        // Pick button configuration
+        binding.mainPickButton.setOnClickListener {
             startActivityForResult(
                 UnsplashPickerActivity.getStartingIntent(
                     this,
-                    !main_single_radio_button.isChecked
+                    !binding.mainSingleRadioButton.isChecked
                 ), REQUEST_CODE
             )
         }

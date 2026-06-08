@@ -1,7 +1,7 @@
 package com.unsplash.pickerandroid.photopicker.domain
 
-import android.net.Uri
 import android.util.Log
+import androidx.core.net.toUri
 import androidx.paging.PagedList
 import androidx.paging.RxPagedListBuilder
 import com.unsplash.pickerandroid.photopicker.UnsplashPhotoPicker
@@ -39,7 +39,7 @@ class Repository constructor(private val networkEndpoints: NetworkEndpoints) {
 
     fun trackDownload(url: String?) {
         if (url != null) {
-            val uriBuilder = Uri.parse(url).buildUpon()
+            val uriBuilder = url.toUri().buildUpon()
             uriBuilder.appendQueryParameter("client_id", UnsplashPhotoPicker.getAccessKey())
             val downloadUrl = uriBuilder.build().toString()
             networkEndpoints.trackDownload(downloadUrl)
@@ -49,11 +49,11 @@ class Repository constructor(private val networkEndpoints: NetworkEndpoints) {
                     override fun onComplete() { /* do nothing */
                     }
 
-                    override fun onSubscribe(d: Disposable?) {  /* do nothing */
+                    override fun onSubscribe(d: Disposable) {  /* do nothing */
                     }
 
-                    override fun onError(e: Throwable?) {
-                        Log.e(Repository::class.java.simpleName, e?.message, e)
+                    override fun onError(e: Throwable) {
+                        Log.e(Repository::class.java.simpleName, e.message, e)
                     }
                 })
         }

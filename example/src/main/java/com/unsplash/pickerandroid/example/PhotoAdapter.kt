@@ -3,13 +3,12 @@ package com.unsplash.pickerandroid.example
 import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
+import com.unsplash.pickerandroid.example.databinding.ItemPhotoBinding
 import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
-import kotlinx.android.synthetic.main.item_photo.view.*
 
 class PhotoAdapter constructor(context: Context) : RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder>() {
 
@@ -18,7 +17,8 @@ class PhotoAdapter constructor(context: Context) : RecyclerView.Adapter<PhotoAda
     private var mListOfPhotos: List<UnsplashPhoto> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
-        return PhotoViewHolder(mLayoutInflater.inflate(R.layout.item_photo, parent, false))
+        val binding = ItemPhotoBinding.inflate(mLayoutInflater, parent, false)
+        return PhotoViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {
@@ -45,7 +45,7 @@ class PhotoAdapter constructor(context: Context) : RecyclerView.Adapter<PhotoAda
     /**
      * UnsplashPhoto view holder.
      */
-    class PhotoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val imageView: ImageView = view.item_photo_iv
+    class PhotoViewHolder(binding: ItemPhotoBinding) : RecyclerView.ViewHolder(binding.root) {
+        val imageView: ImageView = binding.itemPhotoIv
     }
 }

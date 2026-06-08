@@ -2,22 +2,18 @@ package com.unsplash.pickerandroid.photopicker.presentation
 
 import android.content.Context
 import android.graphics.Color
-import android.text.Html
 import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.core.text.HtmlCompat
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
-import com.unsplash.pickerandroid.photopicker.R
 import com.unsplash.pickerandroid.photopicker.UnsplashPhotoPicker
 import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
-import kotlinx.android.synthetic.main.item_unsplash_photo.view.*
+import com.unsplash.pickerandroid.photopicker.databinding.ItemUnsplashPhotoBinding
 
 /**
  * The photos recycler view adapter.
@@ -36,25 +32,26 @@ class UnsplashPhotoAdapter constructor(context: Context, private val isMultipleS
     private var mOnPhotoSelectedListener: OnPhotoSelectedListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
-        return PhotoViewHolder(mLayoutInflater.inflate(R.layout.item_unsplash_photo, parent, false))
+        val binding = ItemUnsplashPhotoBinding.inflate(mLayoutInflater, parent, false)
+        return PhotoViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {
         // item
         getItem(position)?.let { photo ->
             // image
-            holder.imageView.aspectRatio = photo.height.toDouble() / photo.width.toDouble()
+            holder.binding.itemUnsplashPhotoImageView.aspectRatio = photo.height.toDouble() / photo.width.toDouble()
             holder.itemView.setBackgroundColor(Color.parseColor(photo.color))
             Picasso.get().load(photo.urls.small)
-                .into(holder.imageView)
+                .into(holder.binding.itemUnsplashPhotoImageView)
             // photograph name
             val txt = String.format("<a href=\"%s?utm_source=%s&utm_medium=referral\">%s</a>", photo.user.links.html, UnsplashPhotoPicker.getAppName(), photo.user.name)
-            holder.txtView.text = HtmlCompat.fromHtml(txt, HtmlCompat.FROM_HTML_MODE_LEGACY)
-            holder.txtView.movementMethod = LinkMovementMethod.getInstance()
+            holder.binding.itemUnsplashPhotoTextView.text = HtmlCompat.fromHtml(txt, HtmlCompat.FROM_HTML_MODE_LEGACY)
+            holder.binding.itemUnsplashPhotoTextView.movementMethod = LinkMovementMethod.getInstance()
             // selected controls visibility
-            holder.checkedImageView.visibility =
+            holder.binding.itemUnsplashPhotoCheckedImageView.visibility =
                     if (mSelectedIndexes.contains(holder.adapterPosition)) View.VISIBLE else View.INVISIBLE
-            holder.overlay.visibility =
+            holder.binding.itemUnsplashPhotoOverlay.visibility =
                     if (mSelectedIndexes.contains(holder.adapterPosition)) View.VISIBLE else View.INVISIBLE
             // click listener
             holder.itemView.setOnClickListener {
@@ -73,7 +70,7 @@ class UnsplashPhotoAdapter constructor(context: Context, private val isMultipleS
             }
             holder.itemView.setOnLongClickListener {
                 photo.urls.regular?.let {
-                    mOnPhotoSelectedListener?.onPhotoLongPress(holder.imageView, it)
+                    mOnPhotoSelectedListener?.onPhotoLongPress(holder.binding.itemUnsplashPhotoImageView, it)
                 }
                 false
             }
@@ -116,10 +113,5 @@ class UnsplashPhotoAdapter constructor(context: Context, private val isMultipleS
     /**
      * UnsplashPhoto view holder.
      */
-    class PhotoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val imageView: AspectRatioImageView = view.item_unsplash_photo_image_view
-        val txtView: TextView = view.item_unsplash_photo_text_view
-        val checkedImageView: ImageView = view.item_unsplash_photo_checked_image_view
-        val overlay: View = view.item_unsplash_photo_overlay
-    }
+    class PhotoViewHolder(val binding: ItemUnsplashPhotoBinding) : RecyclerView.ViewHolder(binding.root)
 }
