@@ -42,7 +42,8 @@ class MainActivity : AppCompatActivity() {
             startActivityForResult(
                 UnsplashPickerActivity.getStartingIntent(
                     this,
-                    !binding.mainSingleRadioButton.isChecked
+                    !binding.mainSingleRadioButton.isChecked,
+                    true
                 ), REQUEST_CODE
             )
         }

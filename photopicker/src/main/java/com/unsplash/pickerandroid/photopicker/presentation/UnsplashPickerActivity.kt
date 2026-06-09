@@ -4,12 +4,15 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
-import androidx.appcompat.app.AppCompatActivity
+import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
+import android.view.Window
+import android.view.WindowInsetsController
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Observer
@@ -36,6 +39,7 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
     private lateinit var mViewModel: UnsplashPickerViewModel
 
     private var mIsMultipleSelection = false
+    private var mIsStatusBarTextDark = false
 
     private var mCurrentState = UnsplashPickerState.IDLE
 
@@ -55,6 +59,11 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
         }
 
         mIsMultipleSelection = intent.getBooleanExtra(EXTRA_IS_MULTIPLE, false)
+        mIsStatusBarTextDark = intent.getBooleanExtra(EXTRA_IS_STATUS_BAR_TEXT_DARK, false)
+
+        if (mIsStatusBarTextDark) {
+            setStatusBarTextDark(window)
+        }
 
         // 2. Setup your layout manager
         mLayoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
@@ -249,9 +258,22 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
         }
     }
 
+    fun setStatusBarTextDark(window: Window) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            window.decorView.windowInsetsController!!.setSystemBarsAppearance(
+                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
+                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+            )
+        } else {
+            window.decorView.systemUiVisibility =
+                window.decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+        }
+    }
+
     companion object {
         const val EXTRA_PHOTOS = "EXTRA_PHOTOS"
         private const val EXTRA_IS_MULTIPLE = "EXTRA_IS_MULTIPLE"
+        private const val EXTRA_IS_STATUS_BAR_TEXT_DARK = "EXTRA_IS_STATUS_BAR_TEXT_DARK"
 
         /**
          * @param callingContext the calling context
@@ -262,6 +284,13 @@ class UnsplashPickerActivity : AppCompatActivity(), OnPhotoSelectedListener {
         fun getStartingIntent(callingContext: Context, isMultipleSelection: Boolean): Intent {
             val intent = Intent(callingContext, UnsplashPickerActivity::class.java)
             intent.putExtra(EXTRA_IS_MULTIPLE, isMultipleSelection)
+            return intent
+        }
+
+        fun getStartingIntent(callingContext: Context, isMultipleSelection: Boolean, isStatusBarTextDark: Boolean): Intent {
+            val intent = Intent(callingContext, UnsplashPickerActivity::class.java)
+            intent.putExtra(EXTRA_IS_MULTIPLE, isMultipleSelection)
+            intent.putExtra(EXTRA_IS_STATUS_BAR_TEXT_DARK, isStatusBarTextDark)
             return intent
         }
     }
